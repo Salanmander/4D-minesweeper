@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="4D Minesweeper"
+run/main_scene="res://Display/minesweeper.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Tester="*res://State/tester.gd"
 
 [rendering]
 

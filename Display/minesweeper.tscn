@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://boifi7ypahmrj"]
+
+[ext_resource type="Script" path="res://Display/minesweeper.gd" id="1_clao7"]
+
+[node name="Minesweeper" type="Node2D"]
+script = ExtResource("1_clao7")
