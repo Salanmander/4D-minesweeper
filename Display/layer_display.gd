@@ -4,6 +4,9 @@ var rows: int
 var cols: int 
 
 
+var EMPTY_TILE: Vector2i = Vector2i(0, 0)
+var MINE_TILE: Vector2i = Vector2i(3, 2)
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -15,18 +18,14 @@ func set_dimensions(rows: int, cols: int):
 	for r in range(rows):
 		for c in range(cols):
 			var atlas_ID = 0
-			var empty_tile = Vector2i(0, 0)
-			set_cell(Vector2i(c, r), atlas_ID, empty_tile)
+			set_cell(Vector2i(c, r), atlas_ID, EMPTY_TILE)
 			pass
+			
+func mine_added(r: int, c: int):
+	var atlas_ID = 0
+	set_cell(Vector2i(c, r), atlas_ID, MINE_TILE)
+	
 
-# Temporary, will use signals
-func display_mines(mines_grid: Array):
-	for r in rows:
-		for c in cols:
-			if mines_grid[r][c]:
-				var atlas_ID = 0
-				var mine_tile = Vector2i(3, 2)
-				set_cell(Vector2i(c, r), atlas_ID, mine_tile )
 	
 	
 func _input(event: InputEvent):

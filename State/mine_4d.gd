@@ -7,6 +7,8 @@ var big_cols: int
 var rows: int
 var cols: int
 
+signal mine_added(big_r: int, big_c: int, r: int, c:int)
+
 func _init(big_rows: int = 5, big_cols: int = 5, rows: int = 8, cols: int = 8, mines: int = 0):
 	
 	self.big_rows = big_rows
@@ -56,6 +58,7 @@ func add_mines(mines: int):
 		
 		if(!is_mine(big_r, big_c, r, c)):
 			set_mine(big_r, big_c, r, c, true)
+			mine_added.emit(big_r, big_c, r, c)
 			mines -= 1
 		
 		pass
@@ -69,21 +72,6 @@ func set_mine(big_r: int, big_c: int, r: int, c: int, val: bool):
 	
 func is_mine(big_r: int, big_c: int, r: int, c: int) -> bool:
 	return grid[big_r][big_c][r][c].mine
-	
-# This is temporary for testing, will use signals in a bit
-func get_layer_mines(big_r: int, big_c: int):
-	var mines_grid = []
-	for r in range(rows):
-		# make a row
-		var row = []
-		
-		# put each mine boolean in the row
-		for c in range(cols):
-			row.append(is_mine(big_r, big_c, r, c))
-		
-		mines_grid.append(row)
-	
-	return mines_grid
 	
 	
 class GridInfo:

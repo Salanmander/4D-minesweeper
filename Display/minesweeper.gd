@@ -15,8 +15,8 @@ func _ready() -> void:
 	rows = 8
 	cols = 5
 	mine_board = Mine4D.new(big_rows, big_cols, rows, cols)
-	mine_board.add_mines(10)
 	setup_grid_display()
+	mine_board.add_mines(10)
 	pass # Replace with function body.
 	
 func setup_grid_display():
@@ -25,9 +25,9 @@ func setup_grid_display():
 		for c in big_cols:
 			var layer_display: Node = packed_layer_display.instantiate()
 			$LayerGrid.add_child(layer_display)
+			layer_display.set_big_location(r, c)
 			layer_display.set_dimensions(rows, cols)
-			layer_display.display_mines(mine_board.get_layer_mines(r, c))
-	print(5)
+			mine_board.mine_added.connect(layer_display.mine_added)
 	pass
 
 

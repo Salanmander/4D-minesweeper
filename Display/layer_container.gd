@@ -1,5 +1,7 @@
 extends Control
 
+var big_r: int
+var big_c: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -14,11 +16,12 @@ func set_dimensions(width: int, height: int):
 	$LayerDisplay.set_dimensions(width, height)
 	resize()
 	
-func display_mines(mines_grid: Array):
-	$LayerDisplay.display_mines(mines_grid)
+func set_big_location(r: int, c: int):
+	big_r = r
+	big_c = c
 	
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func mine_added(big_r: int, big_c: int, r: int, c: int):
+	if big_r == self.big_r and big_c == self.big_c:
+		$LayerDisplay.mine_added(r, c)
+	
+	
