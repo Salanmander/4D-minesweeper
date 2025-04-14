@@ -3,9 +3,12 @@ extends Control
 var big_r: int
 var big_c: int
 
+signal clicked(r: int, c: int)
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	resize()
+	$LayerDisplay.clicked.connect(emit_click)
 	pass # Replace with function body.
 	
 func resize():
@@ -20,8 +23,12 @@ func set_big_location(r: int, c: int):
 	big_r = r
 	big_c = c
 	
+
 func mine_added(big_r: int, big_c: int, r: int, c: int):
 	if big_r == self.big_r and big_c == self.big_c:
 		$LayerDisplay.mine_added(r, c)
+		
+func emit_click(r: int, c: int):
+	clicked.emit(r, c)
 	
 	

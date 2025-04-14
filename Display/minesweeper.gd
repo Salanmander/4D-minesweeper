@@ -28,6 +28,7 @@ func setup_grid_display():
 			layer_display.set_big_location(r, c)
 			layer_display.set_dimensions(rows, cols)
 			mine_board.mine_added.connect(layer_display.mine_added)
+			layer_display.clicked.connect(mine_board.on_click.bindv([r, c]))
 	pass
 
 

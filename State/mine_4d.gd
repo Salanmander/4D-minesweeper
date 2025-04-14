@@ -58,7 +58,6 @@ func add_mines(mines: int):
 		
 		if(!is_mine(big_r, big_c, r, c)):
 			set_mine(big_r, big_c, r, c, true)
-			mine_added.emit(big_r, big_c, r, c)
 			mines -= 1
 		
 		pass
@@ -68,10 +67,16 @@ func add_mines(mines: int):
 
 func set_mine(big_r: int, big_c: int, r: int, c: int, val: bool):
 	grid[big_r][big_c][r][c].mine = val
+	mine_added.emit(big_r, big_c, r, c)
 	pass
 	
 func is_mine(big_r: int, big_c: int, r: int, c: int) -> bool:
 	return grid[big_r][big_c][r][c].mine
+	
+# The order of inputs here is different because big_r and big_c are from a 
+# bindv, since they're connected to signals from various different objects
+func on_click(r: int, c: int, big_r: int, big_c: int):
+	set_mine(big_r, big_c, r, c, true)
 	
 	
 class GridInfo:

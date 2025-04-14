@@ -7,6 +7,9 @@ var cols: int
 var EMPTY_TILE: Vector2i = Vector2i(0, 0)
 var MINE_TILE: Vector2i = Vector2i(3, 2)
 
+
+signal clicked(r: int, c: int)
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -29,11 +32,22 @@ func mine_added(r: int, c: int):
 	
 	
 func _input(event: InputEvent):
-	if event is InputEventMouseButton:
-		event = make_input_local(event)
-		if in_local_bounds(event.position):
-			print(event.position)
-	pass
+	if not event is InputEventMouseButton:
+		return
+		
+		
+	event = make_input_local(event)
+	if not in_local_bounds(event.position):
+		return
+		
+	# Only responding to mouse-release events
+	if event.pressed:
+		return
+		
+	var map_loc: Vector2i = local_to_map(event.position)
+	
+	# Emit in form r, c
+	clicked.emit(map_loc.y, map_loc.x)
 	
 func in_local_bounds(position: Vector2) -> bool:
 	var map_pos: Vector2i = local_to_map(position)
