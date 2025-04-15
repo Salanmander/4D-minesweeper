@@ -3,6 +3,8 @@ extends TileMapLayer
 var rows: int
 var cols: int 
 
+var lost: bool
+
 
 var EMPTY_TILE: Vector2i = Vector2i(0, 0)
 var HIDDEN: Vector2i = Vector2i(1, 2)
@@ -47,6 +49,9 @@ func number_revealed(r: int, c: int, count: int):
 func _input(event: InputEvent):
 	if not event is InputEventMouseButton:
 		return
+	
+	if lost:
+		return
 		
 		
 	event = make_input_local(event)
@@ -69,3 +74,6 @@ func in_local_bounds(position: Vector2) -> bool:
 			return true
 			
 	return false
+	
+func lose():
+	lost = true
