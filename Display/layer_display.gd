@@ -5,7 +5,9 @@ var cols: int
 
 
 var EMPTY_TILE: Vector2i = Vector2i(0, 0)
+var HIDDEN: Vector2i = Vector2i(1, 2)
 var MINE_TILE: Vector2i = Vector2i(3, 2)
+var EXPLODED_MINE_TILE: Vector2i = Vector2i(2, 2)
 
 
 signal clicked(r: int, c: int)
@@ -21,12 +23,23 @@ func set_dimensions(rows: int, cols: int):
 	for r in range(rows):
 		for c in range(cols):
 			var atlas_ID = 0
-			set_cell(Vector2i(c, r), atlas_ID, EMPTY_TILE)
+			set_cell(Vector2i(c, r), atlas_ID, HIDDEN)
 			pass
 			
-func mine_added(r: int, c: int):
+func exploded(r: int, c: int):
+	var atlas_ID = 0
+	set_cell(Vector2i(c, r), atlas_ID, EXPLODED_MINE_TILE)
+			
+func mine_revealed(r: int, c: int):
 	var atlas_ID = 0
 	set_cell(Vector2i(c, r), atlas_ID, MINE_TILE)
+	
+func number_revealed(r: int, c: int, count: int):
+	var atlas_ID = 0
+	var atlas_x = count%10
+	var atlas_y = count/10
+	set_cell(Vector2i(c, r), atlas_ID, Vector2i(atlas_x, atlas_y))
+	
 	
 
 	

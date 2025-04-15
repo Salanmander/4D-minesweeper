@@ -10,13 +10,14 @@ var mine_board: Mine4D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	big_rows = 3
-	big_cols = 4
-	rows = 8
-	cols = 5
+	big_rows = 4
+	big_cols = 3
+	rows = 9
+	cols = 10
 	mine_board = Mine4D.new(big_rows, big_cols, rows, cols)
 	setup_grid_display()
 	mine_board.add_mines(10)
+	mine_board.calc_all_adjacent()
 	pass # Replace with function body.
 	
 func setup_grid_display():
@@ -27,7 +28,9 @@ func setup_grid_display():
 			$LayerGrid.add_child(layer_display)
 			layer_display.set_big_location(r, c)
 			layer_display.set_dimensions(rows, cols)
-			mine_board.mine_added.connect(layer_display.mine_added)
+			mine_board.exploded.connect(layer_display.exploded)
+			mine_board.mine_revealed.connect(layer_display.mine_revealed)
+			mine_board.number_revealed.connect(layer_display.number_revealed)
 			layer_display.clicked.connect(mine_board.on_click.bindv([r, c]))
 	pass
 
