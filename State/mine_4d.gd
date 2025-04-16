@@ -131,38 +131,63 @@ func on_click(r: int, c: int, big_r: int, big_c: int):
 
 
 func flood_open(big_r: int, big_c: int, r: int, c: int):
+	
+	var start_time = Time.get_ticks_usec()
+	var queue: Array[Array] = []
+	
+	# Reveal and emit before we add to the queue. The queue is for
+	# what things we should reveal the neighbors of
 	number_revealed.emit(big_r, big_c, r, c, grid[big_r][big_c][r][c].adjacent)
 	grid[big_r][big_c][r][c].revealed = true
 	
-	
 	if grid[big_r][big_c][r][c].adjacent != 0:
 		return
-	
-	# If the number *was* zero, continue by recursively opening nearby things
-	
-	var br_checks: Array[int] = []
-	var bc_checks: Array[int] = []
-	var r_checks: Array[int] = []
-	var c_checks: Array[int] = []
-	for off in [-1, 0, 1]:
-		if big_r + off >= 0 and big_r + off < big_rows:
-			br_checks.append(big_r + off)
-		if big_c + off >= 0 and big_c + off < big_cols:
-			bc_checks.append(big_c + off)
-		if r + off >= 0 and r + off < rows:
-			r_checks.append(r + off)
-		if c + off >= 0 and c + off < cols:
-			c_checks.append(c + off)
-		pass
 		
-	# Recursive call for any not-yet-revealed adjacent squares
-	for ch_br in br_checks:
-		for ch_bc in bc_checks:
-			for ch_r in r_checks:
-				for ch_c in c_checks:
-					if (ch_br != big_r or ch_bc != big_c or ch_r != r or ch_c != c):
-						if not grid[ch_br][ch_bc][ch_r][ch_c].revealed:
-							flood_open(ch_br, ch_bc, ch_r, ch_c)
+	# If the number *was* zero, queue to reveal neighbors
+	
+	queue.append([big_r, big_c, r, c])
+	
+	var max_queue_size: int = queue.size()
+	
+	while queue.size() > 0:
+		var coords: Array = queue.pop_front()
+		big_r = coords[0]
+		big_c = coords[1]
+		r = coords[2]
+		c = coords[3]
+		
+		var br_checks: Array[int] = []
+		var bc_checks: Array[int] = []
+		var r_checks: Array[int] = []
+		var c_checks: Array[int] = []
+		for off in [-1, 0, 1]:
+			if big_r + off >= 0 and big_r + off < big_rows:
+				br_checks.append(big_r + off)
+			if big_c + off >= 0 and big_c + off < big_cols:
+				bc_checks.append(big_c + off)
+			if r + off >= 0 and r + off < rows:
+				r_checks.append(r + off)
+			if c + off >= 0 and c + off < cols:
+				c_checks.append(c + off)
+			pass
+			
+		# Recursive call for any not-yet-revealed adjacent squares
+		for ch_br in br_checks:
+			for ch_bc in bc_checks:
+				for ch_r in r_checks:
+					for ch_c in c_checks:
+						if (ch_br != big_r or ch_bc != big_c or ch_r != r or ch_c != c):
+							if not grid[ch_br][ch_bc][ch_r][ch_c].revealed:
+								number_revealed.emit(ch_br, ch_bc, ch_r, ch_c, grid[ch_br][ch_bc][ch_r][ch_c].adjacent)
+								grid[ch_br][ch_bc][ch_r][ch_c].revealed = true
+								if(grid[ch_br][ch_bc][ch_r][ch_c].adjacent == 0):
+									queue.append([ch_br, ch_bc, ch_r, ch_c])
+								
+		if queue.size() > max_queue_size:
+			max_queue_size = queue.size()
+	
+	var end_time = Time.get_ticks_usec()
+	print((end_time - start_time)/1000)
 	
 
 func explode(big_r: int, big_c: int, r: int, c: int):

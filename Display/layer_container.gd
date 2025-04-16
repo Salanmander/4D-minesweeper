@@ -13,7 +13,9 @@ func _ready() -> void:
 	
 func resize():
 	var map_size = $LayerDisplay.get_used_rect().size
-	custom_minimum_size = map_size*$LayerDisplay.tile_set.tile_size
+	var scale_factor = Vector2($LayerDisplay.tile_set.tile_size) * $LayerDisplay.scale
+	custom_minimum_size = Vector2(map_size)*scale_factor
+
 	
 func set_dimensions(width: int, height: int):
 	$LayerDisplay.set_dimensions(width, height)

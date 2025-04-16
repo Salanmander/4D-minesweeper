@@ -40,5 +40,6 @@ anchors_preset = 0
 script = ExtResource("1_bcy1d")
 
 [node name="LayerDisplay" type="TileMapLayer" parent="."]
+scale = Vector2(3, 3)
 tile_set = SubResource("TileSet_dlnit")
 script = ExtResource("1_hovg4")
