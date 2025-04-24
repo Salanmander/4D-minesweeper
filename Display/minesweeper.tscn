@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://boifi7ypahmrj"]
+[gd_scene load_steps=3 format=3 uid="uid://boifi7ypahmrj"]
 
 [ext_resource type="Script" path="res://Display/minesweeper.gd" id="1_clao7"]
+[ext_resource type="Script" path="res://Display/options.gd" id="2_kqhxh"]
 
 [node name="Minesweeper" type="Control"]
 layout_mode = 3
@@ -11,14 +12,39 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_clao7")
 
-[node name="Scroll" type="ScrollContainer" parent="."]
+[node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Options" type="VBoxContainer" parent="VBox"]
+layout_mode = 2
+script = ExtResource("2_kqhxh")
+
+[node name="GridSize" type="HBoxContainer" parent="VBox/Options"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 40
+
+[node name="Other" type="HBoxContainer" parent="VBox/Options"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 40
+
+[node name="Scroll" type="ScrollContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 0
 
-[node name="LayerGrid" type="GridContainer" parent="Scroll"]
+[node name="LayerGrid" type="GridContainer" parent="VBox/Scroll"]
 layout_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="."]
+layout_mode = 0
+offset_right = 24.0
+offset_bottom = 24.0
+
+[connection signal="difference_toggled" from="VBox/Options" to="." method="_on_options_difference_toggled"]

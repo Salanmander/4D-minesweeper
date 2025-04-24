@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://crqbels7iumf8"]
+
+[ext_resource type="Script" path="res://Menus/num_input.gd" id="1_ci6k1"]
+
+[node name="NumInput" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ci6k1")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "big_r"
+
+[node name="SpinBox" type="SpinBox" parent="."]
+layout_mode = 2

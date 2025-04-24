@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://crgyapymaad0b"]
+[gd_scene load_steps=10 format=3 uid="uid://crgyapymaad0b"]
 
 [ext_resource type="Script" path="res://Display/layer_container.gd" id="1_bcy1d"]
 [ext_resource type="Script" path="res://Display/layer_display.gd" id="1_hovg4"]
 [ext_resource type="Texture2D" uid="uid://qxiy4beefld0" path="res://Display/tileset.png" id="1_n4sk1"]
+[ext_resource type="Texture2D" uid="uid://i5qj650ar4a4" path="res://Display/highlight_tiles.png" id="4_oqscj"]
+[ext_resource type="Script" path="res://Display/highlight_display.gd" id="5_kgo5s"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x5dou"]
 texture = ExtResource("1_n4sk1")
@@ -30,9 +32,29 @@ texture = ExtResource("1_n4sk1")
 1:2/0 = 0
 2:2/0 = 0
 3:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+8:2/0 = 0
+9:2/0 = 0
+5:3/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_dlnit"]
 sources/0 = SubResource("TileSetAtlasSource_x5dou")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0j8bj"]
+texture = ExtResource("4_oqscj")
+1:0/0 = 0
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_ed8mk"]
+sources/0 = SubResource("TileSetAtlasSource_0j8bj")
 
 [node name="LayerContainer" type="Control"]
 layout_mode = 3
@@ -43,3 +65,7 @@ script = ExtResource("1_bcy1d")
 scale = Vector2(3, 3)
 tile_set = SubResource("TileSet_dlnit")
 script = ExtResource("1_hovg4")
+
+[node name="HighlightDisplay" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_ed8mk")
+script = ExtResource("5_kgo5s")
