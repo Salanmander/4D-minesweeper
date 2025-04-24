@@ -42,9 +42,5 @@ mouse_filter = 0
 [node name="LayerGrid" type="GridContainer" parent="VBox/Scroll"]
 layout_mode = 2
 
-[node name="CheckBox" type="CheckBox" parent="."]
-layout_mode = 0
-offset_right = 24.0
-offset_bottom = 24.0
-
 [connection signal="difference_toggled" from="VBox/Options" to="." method="_on_options_difference_toggled"]
+[connection signal="new_game_requested" from="VBox/Options" to="." method="_on_options_new_game_requested"]

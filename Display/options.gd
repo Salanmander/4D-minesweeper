@@ -8,6 +8,7 @@ var c_input: Control
 var mines_input: Control
 
 signal difference_toggled(display_diff: bool)
+signal new_game_requested(big_rows: int, big_cols: int, rows: int, cols: int, mines: int)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -61,11 +62,14 @@ func set_values(big_rows: int, big_cols: int, rows: int, cols:int, mines:int):
 	c_input.set_val(cols)
 	mines_input.set_val(mines)
 	
-	
-
 
 func new_game():
-	print("New game pressed")
+	var big_rows = big_r_input.get_val()
+	var big_cols = big_c_input.get_val()
+	var rows = r_input.get_val()
+	var cols = c_input.get_val()
+	var mines = mines_input.get_val()
+	new_game_requested.emit(big_rows, big_cols, rows, cols, mines)
 	pass
 	
 func difference_toggle(selected: bool):

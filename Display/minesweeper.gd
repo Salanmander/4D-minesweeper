@@ -11,12 +11,14 @@ var mine_board: Mine4D
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
+	start_new_game(4, 6, 7, 9, 40)
+	
+func start_new_game(big_rows: int, big_cols: int, rows: int, cols: int, mines: int):
 	# Constants for number of rows/cols
-	big_rows = 4
-	big_cols = 6
-	rows = 7
-	cols = 9
-	var mines = 40
+	self.big_rows = big_rows
+	self.big_cols = big_cols
+	self.rows = rows
+	self.cols = cols
 	mine_board = Mine4D.new(big_rows, big_cols, rows, cols)
 	setup_grid_display()
 	mine_board.add_mines(mines)
@@ -27,6 +29,11 @@ func _ready() -> void:
 	
 func setup_grid_display():
 	var grid_node: Node = get_node("VBox/Scroll/LayerGrid")
+	var existing_layers: Array[Node] = grid_node.get_children()
+	for layer: Node in existing_layers:
+		layer.queue_free()
+		grid_node.remove_child(layer)
+		
 	grid_node.columns = big_cols
 	for r in big_rows:
 		for c in big_cols:
@@ -62,3 +69,8 @@ func _process(delta: float) -> void:
 
 func _on_options_difference_toggled(display_diff: bool) -> void:
 	mine_board.display_diff_changed(display_diff)
+
+
+func _on_options_new_game_requested(big_rows: int, big_cols: int, rows: int, cols: int, mines: int) -> void:
+	start_new_game(big_rows, big_cols, rows, cols, mines)
+	pass # Replace with function body.
