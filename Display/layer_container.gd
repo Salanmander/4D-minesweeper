@@ -63,12 +63,19 @@ func blank_revealed(big_r: int, big_c: int, r: int, c: int):
 # Input order is different because big_r and big_c are passed from a bindv
 func entered(r: int, c: int, big_r: int, big_c: int):
 	$HighlightDisplay.clear_all()
+	$LayerDisplay.adjacent_unindicate_all()
 	if abs(self.big_r - big_r) <= 1 and abs(self.big_c - big_c) <= 1:
 		for ch_r in [r-1, r, r+1]:
 			for ch_c in [c-1, c, c+1]:
 				if $LayerDisplay.in_map_bounds(ch_r, ch_c):
 					var hidden: bool = $LayerDisplay.is_hidden(ch_r, ch_c)
 					$HighlightDisplay.highlight(ch_r, ch_c, hidden)
+					
+					# TODO: test mouse modifications
+					var left_held: bool = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
+					var right_held: bool = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
+					if Input.is_action_pressed("check_adjacent") or (left_held and right_held):
+						$LayerDisplay.adjacent_indicate(ch_r, ch_c)
 		#$HighlightDisplay.entered_nearby_layer(r, c)
 		
 		

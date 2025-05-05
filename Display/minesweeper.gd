@@ -5,12 +5,14 @@ var big_cols: int
 var rows: int
 var cols: int
 
+var display_diff: bool
+
 var packed_layer_display: PackedScene = load("res://Display/layer_display.tscn")
 var mine_board: Mine4D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
+	display_diff = true
 	start_new_game(4, 6, 7, 9, 40)
 	
 func start_new_game(big_rows: int, big_cols: int, rows: int, cols: int, mines: int):
@@ -23,6 +25,7 @@ func start_new_game(big_rows: int, big_cols: int, rows: int, cols: int, mines: i
 	setup_grid_display()
 	mine_board.add_mines(mines)
 	mine_board.calc_all_adjacent()
+	mine_board.display_diff_changed(display_diff)
 	
 	get_node("VBox/Options").set_values(big_rows, big_cols, rows, cols, mines)
 	pass # Replace with function body.
@@ -62,15 +65,34 @@ func setup_grid_display():
 	pass
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _input(event: InputEvent):	
+		
+	if event is InputEventMouseButton:
+	
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed:
+				ButtonStates.right_button_down(event)
+			else:
+				ButtonStates.right_button_up(event)
+				
+		elif event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				ButtonStates.left_button_down(event)
+			else:
+				ButtonStates.left_button_up(event)
+	
+	elif event is InputEventKey:
+		if event.keycode == KEY_C:
+			if event.pressed:
+				ButtonStates.c_down(event)
+			else:
+				ButtonStates.c_up(event)
 
 
 func _on_options_difference_toggled(display_diff: bool) -> void:
+	self.display_diff = display_diff
 	mine_board.display_diff_changed(display_diff)
 
 
 func _on_options_new_game_requested(big_rows: int, big_cols: int, rows: int, cols: int, mines: int) -> void:
 	start_new_game(big_rows, big_cols, rows, cols, mines)
-	pass # Replace with function body.

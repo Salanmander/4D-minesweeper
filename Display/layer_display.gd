@@ -16,6 +16,7 @@ var EXTRAS_ROW: int = 3
 
 var BLANK: Vector2i = Vector2i(4, EXTRAS_ROW)
 var HIDDEN: Vector2i = Vector2i(5, EXTRAS_ROW)
+var ADJACENT: Vector2i = Vector2i(6, EXTRAS_ROW)
 var FLAGGED: Vector2i = Vector2i(0, EXTRAS_ROW)
 var QUESTIONED: Vector2i = Vector2i(1, EXTRAS_ROW)
 var MINE_TILE: Vector2i = Vector2i(3, EXTRAS_ROW)
@@ -65,12 +66,35 @@ func number_revealed(r: int, c: int, count: int):
 func blank_revealed(r: int, c: int):
 	set_cell(Vector2i(c, r), ATLAS_ID, BLANK)
 	
+func adjacent_unindicate_all():
+	for r in range(rows):
+		for c in range(cols):
+			
+			# Retrieved in order x, y
+			var atlas_coords = get_cell_atlas_coords(Vector2i(c, r))
+			if atlas_coords == ADJACENT:
+				set_cell(Vector2i(c, r), 0, HIDDEN)
+				
+func adjacent_indicate(r: int, c: int):
+		var atlas_coords = get_cell_atlas_coords(Vector2i(c, r))
+		if atlas_coords == HIDDEN:
+			set_cell(Vector2i(c, r), 0, ADJACENT)
+	
+			
+	
 	
 	
 
 	
 	
 func _input(event: InputEvent):
+	
+	if event is InputEventKey:
+		var mouse_pos: Vector2 = get_local_mouse_position()
+		if(in_local_bounds(mouse_pos)):
+			update_mouse_position(mouse_pos)
+	
+		return
 		
 		
 	if not (event is InputEventMouseButton or event is InputEventMouseMotion):
@@ -85,15 +109,15 @@ func _input(event: InputEvent):
 		return
 	
 	if event is InputEventMouseMotion:
-		mouse_move(event)
+		update_mouse_position(event.position)
 	elif event.button_index == MOUSE_BUTTON_RIGHT:
 		right_button_click(event)
 	elif event.button_index == MOUSE_BUTTON_LEFT:
 		left_button_click(event)
 		
 
-func mouse_move(event):
-	var map_loc: Vector2i = local_to_map(event.position)
+func update_mouse_position(position: Vector2):
+	var map_loc: Vector2i = local_to_map(position)
 	# Emit in form r, c
 	square_entered.emit(map_loc.y, map_loc.x)
 	
@@ -101,55 +125,33 @@ func mouse_move(event):
 
 func left_button_click(event: InputEvent):
 	if event.pressed:
-		left_held = true
-		if(right_held):
-			start_double_hold()
+		return
 		
-	else:
-			
-		left_held = false
-		if(right_held):
-			end_double_hold()
-			
-		var map_loc: Vector2i = local_to_map(event.position)
-		
-		# Emit in form r, c
-		clicked.emit(map_loc.y, map_loc.x)
+	var map_loc: Vector2i = local_to_map(event.position)
+	
+	# Emit in form r, c
+	clicked.emit(map_loc.y, map_loc.x)
 		
 
 func right_button_click(event:InputEvent):
 	# Only responding to mouse-release events
 	if event.pressed:
-		right_held = true
-		if(left_held):
-			start_double_hold()
-	else:
-		right_held = false
-		if(left_held):
-			end_double_hold()
+		return
 		
-		var map_loc: Vector2i = local_to_map(event.position)
-		
-		var atlas_coords: Vector2i = get_cell_atlas_coords(map_loc)
-		
-		if atlas_coords == FLAGGED:
-			set_cell(map_loc, ATLAS_ID, QUESTIONED)
-			flag_changed.emit(map_loc.y, map_loc.x, Consts.QUESTIONED_STATE)
-		elif atlas_coords == QUESTIONED:
-			set_cell(map_loc, ATLAS_ID, HIDDEN)
-			flag_changed.emit(map_loc.y, map_loc.x, Consts.NO_FLAG_STATE)
-		elif atlas_coords == HIDDEN:
-			set_cell(map_loc, ATLAS_ID, FLAGGED)
-			flag_changed.emit(map_loc.y, map_loc.x, Consts.FLAG_STATE)
-		
-	pass
+	var map_loc: Vector2i = local_to_map(event.position)
 	
-func start_double_hold():
-	print("Start")
-	pass
-
-func end_double_hold():
-	print("end")
+	var atlas_coords: Vector2i = get_cell_atlas_coords(map_loc)
+	
+	if atlas_coords == FLAGGED:
+		set_cell(map_loc, ATLAS_ID, QUESTIONED)
+		flag_changed.emit(map_loc.y, map_loc.x, Consts.QUESTIONED_STATE)
+	elif atlas_coords == QUESTIONED:
+		set_cell(map_loc, ATLAS_ID, HIDDEN)
+		flag_changed.emit(map_loc.y, map_loc.x, Consts.NO_FLAG_STATE)
+	elif atlas_coords == HIDDEN:
+		set_cell(map_loc, ATLAS_ID, FLAGGED)
+		flag_changed.emit(map_loc.y, map_loc.x, Consts.FLAG_STATE)
+		
 	pass
 	
 func is_hidden(r: int, c: int) -> bool:
