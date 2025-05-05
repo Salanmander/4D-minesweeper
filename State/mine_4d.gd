@@ -231,6 +231,8 @@ func update_display_num(big_r: int, big_c: int, r: int, c: int):
 	var space = grid[big_r][big_c][r][c]
 	if not space.revealed:
 		return
+	if space.mine:
+		return
 	
 	var display_amount = space.adjacent
 	if(display_diff):
@@ -289,6 +291,13 @@ func on_click(r: int, c: int, big_r: int, big_c: int):
 		return
 	if grid[big_r][big_c][r][c].mine:
 		explode(big_r, big_c, r, c)
+		return
+	
+	flood_open(big_r, big_c, r, c)
+	
+
+func on_adjacent_check(r: int, c: int, big_r: int, big_c: int):
+	if grid[big_r][big_c][r][c].adjacent != grid[big_r][big_c][r][c].flags_adjacent:
 		return
 	
 	flood_open(big_r, big_c, r, c)

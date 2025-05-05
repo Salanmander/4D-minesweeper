@@ -24,6 +24,7 @@ var EXPLODED_MINE_TILE: Vector2i = Vector2i(2, EXTRAS_ROW)
 
 
 signal clicked(r: int, c: int)
+signal adjacent_check(r: int, c: int)
 signal flag_changed(r: int, c: int, flagged: int)
 signal square_entered(r: int, c: int)
 
@@ -93,6 +94,10 @@ func _input(event: InputEvent):
 		var mouse_pos: Vector2 = get_local_mouse_position()
 		if(in_local_bounds(mouse_pos)):
 			update_mouse_position(mouse_pos)
+			if Input.is_action_just_released("check_adjacent"):
+				adjacent_check_click(mouse_pos)
+				
+				
 	
 		return
 		
@@ -125,12 +130,33 @@ func update_mouse_position(position: Vector2):
 
 func left_button_click(event: InputEvent):
 	if event.pressed:
+		# Only register releases
+		return
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+		# If right is still held, we were coming from a two-button-click.
+		# Ignore it.
 		return
 		
 	var map_loc: Vector2i = local_to_map(event.position)
 	
-	# Emit in form r, c
-	clicked.emit(map_loc.y, map_loc.x)
+	var this_tile: Vector2i = get_cell_atlas_coords(map_loc)
+	
+	# Register a click on hidden, non-flagged tiles. Otherwise, no click.
+	if this_tile == HIDDEN or this_tile == ADJACENT:
+		# Emit in form r, c
+		clicked.emit(map_loc.y, map_loc.x)
+		
+func adjacent_check_click(local_pos: Vector2):
+	
+	var map_loc: Vector2i = local_to_map(local_pos)
+	
+	var this_tile: Vector2i = get_cell_atlas_coords(map_loc)
+	
+	# Want to register and adjacent-check click on any *number*
+	# Things on the extras row don't count
+	if this_tile.y == EXTRAS_ROW:
+		return
+	adjacent_check.emit(map_loc.y, map_loc.x)
 		
 
 func right_button_click(event:InputEvent):

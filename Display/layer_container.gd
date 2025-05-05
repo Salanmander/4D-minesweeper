@@ -7,6 +7,7 @@ var SCALE_SIZE: Vector2 = Vector2(3, 3)
 var GRID_EXTRA_SPACING: Vector2 = Vector2(10, 10)
 
 signal clicked(r: int, c: int)
+signal adjacent_check(r: int, c: int)
 signal flag_changed(r: int, c: int, flagged: int)
 signal square_entered(r: int, c: int)
 
@@ -14,6 +15,7 @@ signal square_entered(r: int, c: int)
 func _ready() -> void:
 	resize()
 	$LayerDisplay.clicked.connect(emit_click)
+	$LayerDisplay.adjacent_check.connect(emit_adjacent_check)
 	$LayerDisplay.flag_changed.connect(emit_flag)
 	$LayerDisplay.square_entered.connect(emit_enter)
 	
@@ -81,6 +83,10 @@ func entered(r: int, c: int, big_r: int, big_c: int):
 		
 func emit_click(r: int, c: int):
 	clicked.emit(r, c)
+	
+	
+func emit_adjacent_check(r: int, c: int):
+	adjacent_check.emit(r, c)
 	
 func emit_flag(r: int, c: int, flagged: int):
 	flag_changed.emit(r, c, flagged)
