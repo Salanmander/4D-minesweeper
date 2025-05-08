@@ -49,6 +49,10 @@ func exploded(big_r: int, big_c: int, r: int, c: int):
 	$LayerDisplay.lose()
 	if big_r == self.big_r and big_c == self.big_c:
 		$LayerDisplay.exploded(r, c)
+		
+func flag_loaded(big_r: int, big_c: int, r: int, c: int, flag_state: int):
+	if big_r == self.big_r and big_c == self.big_c:
+		$LayerDisplay.flag_loaded(r, c, flag_state)
 
 func mine_revealed(big_r: int, big_c: int, r: int, c: int):
 	if big_r == self.big_r and big_c == self.big_c:

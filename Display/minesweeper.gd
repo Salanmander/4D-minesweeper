@@ -5,6 +5,8 @@ var big_cols: int
 var rows: int
 var cols: int
 
+var save_filename: String = "save.m4d"
+
 var display_diff: bool
 
 var packed_layer_display: PackedScene = load("res://Display/layer_display.tscn")
@@ -14,6 +16,8 @@ var mine_board: Mine4D
 func _ready() -> void:
 	display_diff = true
 	start_new_game(4, 6, 7, 9, 40)
+	if(FileAccess.file_exists(save_filename)):
+		load_game()
 	
 func start_new_game(big_rows: int, big_cols: int, rows: int, cols: int, mines: int):
 	# Constants for number of rows/cols
@@ -38,6 +42,8 @@ func setup_grid_display():
 		grid_node.remove_child(layer)
 		
 	grid_node.columns = big_cols
+	mine_board.exploded.connect(exploded)
+	mine_board.save_requested.connect(save_game)
 	for r in big_rows:
 		for c in big_cols:
 			var layer_display: Node = packed_layer_display.instantiate()
@@ -48,6 +54,7 @@ func setup_grid_display():
 			mine_board.mine_revealed.connect(layer_display.mine_revealed)
 			mine_board.number_revealed.connect(layer_display.number_revealed)
 			mine_board.blank_revealed.connect(layer_display.blank_revealed)
+			mine_board.flag_loaded.connect(layer_display.flag_loaded)
 			
 			layer_display.clicked.connect(mine_board.on_click.bindv([r, c]))
 			layer_display.adjacent_check.connect(mine_board.on_adjacent_check.bindv([r, c]))
@@ -97,3 +104,46 @@ func _on_options_difference_toggled(display_diff: bool) -> void:
 
 func _on_options_new_game_requested(big_rows: int, big_cols: int, rows: int, cols: int, mines: int) -> void:
 	start_new_game(big_rows, big_cols, rows, cols, mines)
+	
+func exploded(big_r: int, big_c: int, r: int, c: int):
+	delete_save()
+	
+	
+#region saveAndLoad
+
+func delete_save():
+	var dir = DirAccess.open("res://")
+	dir.remove(save_filename)
+
+func save_game():
+	var save_file: FileAccess = FileAccess.open(save_filename, FileAccess.WRITE)
+	save_file.store_16(big_rows)
+	save_file.store_16(big_cols)
+	save_file.store_16(rows)
+	save_file.store_16(cols)
+	var full_objects: bool = true
+	save_file.store_var(mine_board.get_grid(), full_objects)
+	save_file.close
+	
+func load_game():
+	var save_file: FileAccess = FileAccess.open(save_filename, FileAccess.READ)
+	big_rows = save_file.get_16()
+	big_cols = save_file.get_16()
+	rows = save_file.get_16()
+	cols = save_file.get_16()
+	var allow_objects: bool = true
+	var saved_grid: Array = save_file.get_var(allow_objects)
+	
+	# Set up the general game board. No mines are needed, because we'll be
+	# loading those from the grid
+	start_new_game(big_rows, big_cols, rows, cols, 0)
+	load_data_from_grid(saved_grid)
+	
+func load_data_from_grid(grid: Array):
+	mine_board.load_data_from_grid(grid)
+	
+	
+	
+
+
+#endregion

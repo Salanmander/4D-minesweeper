@@ -21,6 +21,10 @@ var FLAGGED: Vector2i = Vector2i(0, EXTRAS_ROW)
 var QUESTIONED: Vector2i = Vector2i(1, EXTRAS_ROW)
 var MINE_TILE: Vector2i = Vector2i(3, EXTRAS_ROW)
 var EXPLODED_MINE_TILE: Vector2i = Vector2i(2, EXTRAS_ROW)
+var FLAG_OVER_MINE: Vector2i = Vector2i(6, EXTRAS_ROW)
+var FLAG_OVER_BLANK: Vector2i = Vector2i(7, EXTRAS_ROW)
+var QUESTION_OVER_MINE: Vector2i = Vector2i(8, EXTRAS_ROW)
+var QUESTION_OVER_BLANK: Vector2i = Vector2i(9, EXTRAS_ROW)
 
 
 signal clicked(r: int, c: int)
@@ -46,6 +50,12 @@ func exploded(r: int, c: int):
 			
 func mine_revealed(r: int, c: int):
 	set_cell(Vector2i(c, r), ATLAS_ID, MINE_TILE)
+	
+func flag_loaded(r: int, c: int, flag_state: int):
+	if flag_state == Consts.FLAG_STATE:
+		set_cell(Vector2i(c, r), ATLAS_ID, FLAGGED)
+	if flag_state == Consts.QUESTIONED_STATE:
+		set_cell(Vector2i(c, r), ATLAS_ID, QUESTIONED)
 	
 func number_revealed(r: int, c: int, count: int):
 	var atlas_x = count%10

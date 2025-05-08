@@ -11,7 +11,7 @@ class_name Mine4D
 #  flags_adjacent: int - number of flags adjacent to that square
 #  revealed: bool - whether the square has been revealed
 #  flag_state: int - a number indicating whether the square has
-#    been flagged. Has possible values:
+#       been flagged. Has possible values:
 #       Consts.NO_FLAG_STATE
 #       Consts.FLAG_STATE
 #       Consts.QUESTIONED_STATE
@@ -26,10 +26,12 @@ var cols: int
 
 var display_diff: bool
 
+signal save_requested()
 signal exploded(big_r: int, big_c: int, r: int, c:int)
 signal mine_revealed(big_r: int, big_c: int, r: int, c:int)
 signal number_revealed(big_r: int, big_c: int, r: int, c:int, count: int)
 signal blank_revealed(big_r: int, big_c: int, r: int, c:int)
+signal flag_loaded(big_r: int, big_c: int, r: int, c: int, flag_state: int)
 
 func _init(big_rows: int = 5, big_cols: int = 5, rows: int = 8, cols: int = 8, mines: int = 0):
 	
@@ -243,6 +245,16 @@ func reveal_mine(big_r: int, big_c: int, r: int, c:int):
 	
 	grid[big_r][big_c][r][c].revealed = true
 	mine_revealed.emit(big_r, big_c, r, c)
+	
+func update_display_full(big_r: int, big_c: int, r: int, c: int):
+	update_display_num(big_r, big_c, r, c)
+	var space = grid[big_r][big_c][r][c]
+	if not space.revealed:
+		if space.flag_state == Consts.FLAG_STATE:
+			flag_loaded.emit(big_r, big_c, r, c, Consts.FLAG_STATE)
+		if space.flag_state == Consts.QUESTIONED_STATE:
+			flag_loaded.emit(big_r, big_c, r, c, Consts.QUESTIONED_STATE)
+
 
 func update_display_num(big_r: int, big_c: int, r: int, c: int):
 	var space = grid[big_r][big_c][r][c]
@@ -312,6 +324,7 @@ func on_click(r: int, c: int, big_r: int, big_c: int):
 		return
 	
 	flood_open(big_r, big_c, r, c)
+	save_requested.emit()
 	
 
 func on_adjacent_check(r: int, c: int, big_r: int, big_c: int):
@@ -319,6 +332,7 @@ func on_adjacent_check(r: int, c: int, big_r: int, big_c: int):
 		return
 	
 	flood_open(big_r, big_c, r, c)
+	save_requested.emit()
 	
 func flag_changed(r: int, c: int, flagged: int, big_r: int, big_c: int):
 	grid[big_r][big_c][r][c].flag_state = flagged
@@ -357,6 +371,8 @@ func flag_changed(r: int, c: int, flagged: int, big_r: int, big_c: int):
 						grid[ch_br][ch_bc][ch_r][ch_c].flags_adjacent += delta
 						if grid[ch_br][ch_bc][ch_r][ch_c].revealed:
 							reveal_space(ch_br, ch_bc, ch_r, ch_c)
+	
+	save_requested.emit()
 		
 	
 	
@@ -364,8 +380,14 @@ func flag_changed(r: int, c: int, flagged: int, big_r: int, big_c: int):
 
 #region saveAndLoad
 
-func get_grid():
+func get_grid() -> Array:
 	return grid
+	
+
+func load_data_from_grid(saved_grid: Array):
+	grid = saved_grid
+	do_for_all(update_display_full)
+	
 
 #endregion
 
