@@ -1,7 +1,24 @@
 extends Resource
 class_name Mine4D
 
+
+
+
+# grid ends up being a 4D array of Dictionary objects.
+# Each dict has the following keys:
+#  mine: bool - whether the square has a mine
+#  adjacent: int - number of mines adjacent to that square
+#  flags_adjacent: int - number of flags adjacent to that square
+#  revealed: bool - whether the square has been revealed
+#  flag_state: int - a number indicating whether the square has
+#    been flagged. Has possible values:
+#       Consts.NO_FLAG_STATE
+#       Consts.FLAG_STATE
+#       Consts.QUESTIONED_STATE
 var grid: Array
+
+
+
 var big_rows: int
 var big_cols: int
 var rows: int
@@ -42,7 +59,7 @@ func make_grid():
 				var row: Array = [];
 				# fill row with GridInfos
 				for c in range(cols):
-					row.append(GridInfo.new())
+					row.append(get_default_grid_info())
 				layer.append(row)
 			# Done forming layer
 		
@@ -87,7 +104,7 @@ func do_for_all(to_call: Callable):
 					
 
 func calc_adjacent_count(big_r: int, big_c: int, r: int, c: int):
-	var this_spot: GridInfo = grid[big_r][big_c][r][c]
+	var this_spot: Dictionary = grid[big_r][big_c][r][c]
 	
 	if this_spot.mine:
 		return
@@ -194,7 +211,7 @@ func flood_open(big_r: int, big_c: int, r: int, c: int):
 	#print((end_time - start_time)/1000)
 	
 func reveal_space(big_r: int, big_c: int, r: int, c: int):
-	var space: GridInfo = grid[big_r][big_c][r][c]
+	var space: Dictionary = grid[big_r][big_c][r][c]
 	space.revealed = true
 	
 	
@@ -231,6 +248,8 @@ func update_display_num(big_r: int, big_c: int, r: int, c: int):
 	var space = grid[big_r][big_c][r][c]
 	if not space.revealed:
 		return
+	
+	# Need to avoid turning revealed mines into numbers
 	if space.mine:
 		return
 	
@@ -273,7 +292,6 @@ func has_adjacent_hidden_nonflag(big_r: int, big_c: int, r: int, c: int) -> bool
 								return true
 	
 	return false
-	
 	
 	
 
@@ -343,12 +361,24 @@ func flag_changed(r: int, c: int, flagged: int, big_r: int, big_c: int):
 	
 	
 #endregion
+
+#region saveAndLoad
+
+func get_grid():
+	return grid
+
+#endregion
+
 	
-class GridInfo:
-	var mine: bool = false
-	var adjacent: int = 0
-	var flags_adjacent: int = 0
-	var revealed: bool = false
-	var flag_state: int = Consts.NO_FLAG_STATE
+func get_default_grid_info() -> Dictionary:
+	var grid_info: Dictionary = {}
+	grid_info.mine = false
+	grid_info.adjacent = 0
+	grid_info.flags_adjacent= 0
+	grid_info.revealed = false
+	grid_info.flag_state = Consts.NO_FLAG_STATE
+	
+	return grid_info
+
 	
 	
