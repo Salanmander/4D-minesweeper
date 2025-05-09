@@ -31,7 +31,12 @@ func start_new_game(big_rows: int, big_cols: int, rows: int, cols: int, mines: i
 	mine_board.calc_all_adjacent()
 	mine_board.display_diff_changed(display_diff)
 	
+	mine_board.exploded.connect(exploded)
+	mine_board.save_requested.connect(save_game)
+	mine_board.game_won.connect(game_won)
+	
 	get_node("VBox/Options").set_values(big_rows, big_cols, rows, cols, mines)
+	$VictoryLabel.visible = false
 	pass # Replace with function body.
 	
 func setup_grid_display():
@@ -42,8 +47,6 @@ func setup_grid_display():
 		grid_node.remove_child(layer)
 		
 	grid_node.columns = big_cols
-	mine_board.exploded.connect(exploded)
-	mine_board.save_requested.connect(save_game)
 	for r in big_rows:
 		for c in big_cols:
 			var layer_display: Node = packed_layer_display.instantiate()
@@ -109,6 +112,10 @@ func _on_options_new_game_requested(big_rows: int, big_cols: int, rows: int, col
 func exploded(big_r: int, big_c: int, r: int, c: int):
 	delete_save()
 	
+func game_won():
+	delete_save()
+	$VictoryLabel.visible = true
+	
 	
 #region saveAndLoad
 
@@ -135,9 +142,17 @@ func load_game():
 	var allow_objects: bool = true
 	var saved_grid: Array = save_file.get_var(allow_objects)
 	
+	var n_mines: int = 0
+	for br in range(big_rows):
+		for bc in range(big_cols):
+			for r in range(rows):
+				for c in range(cols):
+					if saved_grid[br][bc][r][c].mine:
+						n_mines += 1
+	
 	# Set up the general game board. No mines are needed, because we'll be
 	# loading those from the grid
-	start_new_game(big_rows, big_cols, rows, cols, 0)
+	start_new_game(big_rows, big_cols, rows, cols, n_mines)
 	load_data_from_grid(saved_grid)
 	
 func load_data_from_grid(grid: Array):

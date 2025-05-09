@@ -21,10 +21,9 @@ var FLAGGED: Vector2i = Vector2i(0, EXTRAS_ROW)
 var QUESTIONED: Vector2i = Vector2i(1, EXTRAS_ROW)
 var MINE_TILE: Vector2i = Vector2i(3, EXTRAS_ROW)
 var EXPLODED_MINE_TILE: Vector2i = Vector2i(2, EXTRAS_ROW)
-var FLAG_OVER_MINE: Vector2i = Vector2i(6, EXTRAS_ROW)
-var FLAG_OVER_BLANK: Vector2i = Vector2i(7, EXTRAS_ROW)
-var QUESTION_OVER_MINE: Vector2i = Vector2i(8, EXTRAS_ROW)
-var QUESTION_OVER_BLANK: Vector2i = Vector2i(9, EXTRAS_ROW)
+var FLAG_OVER_MINE: Vector2i = Vector2i(7, EXTRAS_ROW)
+var FLAG_OVER_BLANK: Vector2i = Vector2i(8, EXTRAS_ROW)
+var QUESTION_OVER_MINE: Vector2i = Vector2i(9, EXTRAS_ROW)
 
 
 signal clicked(r: int, c: int)
@@ -52,8 +51,6 @@ func nomine_revealed(r: int, c: int):
 	var atlas_coords = get_cell_atlas_coords(Vector2i(c, r)) 
 	if atlas_coords == FLAGGED or atlas_coords == FLAG_OVER_MINE:
 		set_cell(Vector2i(c, r), ATLAS_ID, FLAG_OVER_BLANK)
-	elif atlas_coords == QUESTIONED or atlas_coords == QUESTION_OVER_MINE:
-		set_cell(Vector2i(c, r), ATLAS_ID, QUESTION_OVER_BLANK)
 			
 func mine_revealed(r: int, c: int):
 	var atlas_coords = get_cell_atlas_coords(Vector2i(c, r)) 
@@ -61,7 +58,7 @@ func mine_revealed(r: int, c: int):
 		set_cell(Vector2i(c, r), ATLAS_ID, MINE_TILE)
 	elif atlas_coords == FLAGGED or atlas_coords == FLAG_OVER_BLANK:
 		set_cell(Vector2i(c, r), ATLAS_ID, FLAG_OVER_MINE)
-	elif atlas_coords == QUESTIONED or atlas_coords == QUESTION_OVER_BLANK:
+	elif atlas_coords == QUESTIONED:
 		set_cell(Vector2i(c, r), ATLAS_ID, QUESTION_OVER_MINE)
 	
 	
@@ -72,6 +69,16 @@ func flag_loaded(r: int, c: int, flag_state: int):
 		set_cell(Vector2i(c, r), ATLAS_ID, QUESTIONED)
 	
 func number_revealed(r: int, c: int, count: int):
+	# Don't display numbers when there are questions/flags there
+	var atlas_coords = get_cell_atlas_coords(Vector2i(c, r)) 
+	var f: bool = atlas_coords == FLAGGED
+	var f_mine: bool = atlas_coords == FLAG_OVER_MINE
+	var f_no_mine: bool = atlas_coords == FLAG_OVER_BLANK
+	var q: bool = atlas_coords == QUESTIONED
+	var q_mine: bool = atlas_coords == QUESTION_OVER_MINE
+	if f or f_mine or f_no_mine or q or q_mine:
+		return
+		
 	var atlas_x = count%10
 	
 	# Shift down based on the row where zero is

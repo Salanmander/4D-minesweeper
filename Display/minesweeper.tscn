@@ -42,5 +42,16 @@ mouse_filter = 0
 [node name="LayerGrid" type="GridContainer" parent="VBox/Scroll"]
 layout_mode = 2
 
+[node name="VictoryLabel" type="Label" parent="."]
+layout_mode = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 619.0
+offset_top = 377.0
+offset_right = -562.0
+offset_bottom = -391.0
+theme_override_font_sizes/font_size = 170
+text = "Victory!"
+
 [connection signal="difference_toggled" from="VBox/Options" to="." method="_on_options_difference_toggled"]
 [connection signal="new_game_requested" from="VBox/Options" to="." method="_on_options_new_game_requested"]

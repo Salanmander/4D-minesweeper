@@ -26,8 +26,10 @@ var cols: int
 
 var display_diff: bool
 var game_running: bool
+var victory: bool
 
 signal save_requested()
+signal game_won()
 signal exploded(big_r: int, big_c: int, r: int, c:int)
 signal mine_revealed(big_r: int, big_c: int, r: int, c:int)
 signal nomine_revealed(big_r: int, big_c: int, r: int, c: int)
@@ -43,6 +45,7 @@ func _init(big_rows: int = 5, big_cols: int = 5, rows: int = 8, cols: int = 8, m
 	self.cols = cols
 	display_diff = true
 	game_running = true
+	victory = false
 	
 	make_grid()
 	add_mines(mines)
@@ -211,6 +214,7 @@ func flood_open(big_r: int, big_c: int, r: int, c: int):
 	# back and check all the revealed spaces and make them blanks
 	# if they should be
 	do_for_all(update_display_num)
+	check_victory()
 	
 	#var end_time = Time.get_ticks_usec()
 	#print((end_time - start_time)/1000)
@@ -231,6 +235,19 @@ func reveal_space(big_r: int, big_c: int, r: int, c: int):
 	else:
 		number_revealed.emit(big_r, big_c, r, c, display_amount)
 
+
+func check_victory():
+	victory = true
+	do_for_all(prevent_victory)
+	if victory:
+		game_won.emit()
+		
+func prevent_victory(big_r: int, big_c: int, r: int, c: int):
+	var space: Dictionary = grid[big_r][big_c][r][c]
+	if space.mine and (not space.flag_state == Consts.FLAG_STATE):
+		victory = false
+	if (not space.mine) and (not space.revealed):
+		victory = false
 	
 
 func explode(big_r: int, big_c: int, r: int, c: int):
