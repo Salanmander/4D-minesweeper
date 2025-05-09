@@ -47,9 +47,23 @@ func set_dimensions(rows: int, cols: int):
 			
 func exploded(r: int, c: int):
 	set_cell(Vector2i(c, r), ATLAS_ID, EXPLODED_MINE_TILE)
+	
+func nomine_revealed(r: int, c: int):
+	var atlas_coords = get_cell_atlas_coords(Vector2i(c, r)) 
+	if atlas_coords == FLAGGED or atlas_coords == FLAG_OVER_MINE:
+		set_cell(Vector2i(c, r), ATLAS_ID, FLAG_OVER_BLANK)
+	elif atlas_coords == QUESTIONED or atlas_coords == QUESTION_OVER_MINE:
+		set_cell(Vector2i(c, r), ATLAS_ID, QUESTION_OVER_BLANK)
 			
 func mine_revealed(r: int, c: int):
-	set_cell(Vector2i(c, r), ATLAS_ID, MINE_TILE)
+	var atlas_coords = get_cell_atlas_coords(Vector2i(c, r)) 
+	if atlas_coords == HIDDEN:
+		set_cell(Vector2i(c, r), ATLAS_ID, MINE_TILE)
+	elif atlas_coords == FLAGGED or atlas_coords == FLAG_OVER_BLANK:
+		set_cell(Vector2i(c, r), ATLAS_ID, FLAG_OVER_MINE)
+	elif atlas_coords == QUESTIONED or atlas_coords == QUESTION_OVER_BLANK:
+		set_cell(Vector2i(c, r), ATLAS_ID, QUESTION_OVER_MINE)
+	
 	
 func flag_loaded(r: int, c: int, flag_state: int):
 	if flag_state == Consts.FLAG_STATE:
@@ -87,9 +101,9 @@ func adjacent_unindicate_all():
 				set_cell(Vector2i(c, r), 0, HIDDEN)
 				
 func adjacent_indicate(r: int, c: int):
-		var atlas_coords = get_cell_atlas_coords(Vector2i(c, r))
-		if atlas_coords == HIDDEN:
-			set_cell(Vector2i(c, r), 0, ADJACENT)
+	var atlas_coords = get_cell_atlas_coords(Vector2i(c, r))
+	if atlas_coords == HIDDEN:
+		set_cell(Vector2i(c, r), 0, ADJACENT)
 	
 			
 	

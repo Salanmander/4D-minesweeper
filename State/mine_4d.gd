@@ -25,10 +25,12 @@ var rows: int
 var cols: int
 
 var display_diff: bool
+var game_running: bool
 
 signal save_requested()
 signal exploded(big_r: int, big_c: int, r: int, c:int)
 signal mine_revealed(big_r: int, big_c: int, r: int, c:int)
+signal nomine_revealed(big_r: int, big_c: int, r: int, c: int)
 signal number_revealed(big_r: int, big_c: int, r: int, c:int, count: int)
 signal blank_revealed(big_r: int, big_c: int, r: int, c:int)
 signal flag_loaded(big_r: int, big_c: int, r: int, c: int, flag_state: int)
@@ -40,6 +42,7 @@ func _init(big_rows: int = 5, big_cols: int = 5, rows: int = 8, cols: int = 8, m
 	self.rows = rows
 	self.cols = cols
 	display_diff = true
+	game_running = true
 	
 	make_grid()
 	add_mines(mines)
@@ -231,16 +234,23 @@ func reveal_space(big_r: int, big_c: int, r: int, c: int):
 	
 
 func explode(big_r: int, big_c: int, r: int, c: int):
+	game_running = false
 	grid[big_r][big_c][r][c].revealed = true
 	exploded.emit(big_r, big_c, r, c)
 	do_for_all(reveal_mine)
 	pass
 	
 func reveal_mine(big_r: int, big_c: int, r: int, c:int):
-	if not grid[big_r][big_c][r][c].mine:
+	var space: Dictionary = grid[big_r][big_c][r][c]
+	if not space.mine:
+		var flagged: bool = space.flag_state == Consts.FLAG_STATE
+		var questioned: bool = space.flag_state == Consts.QUESTIONED_STATE
+		if flagged or questioned:
+			space.revealed = true
+			nomine_revealed.emit(big_r, big_c, r, c)
 		return
 	
-	if grid[big_r][big_c][r][c].revealed:
+	if space.revealed:
 		return
 	
 	grid[big_r][big_c][r][c].revealed = true
@@ -324,7 +334,8 @@ func on_click(r: int, c: int, big_r: int, big_c: int):
 		return
 	
 	flood_open(big_r, big_c, r, c)
-	save_requested.emit()
+	if game_running:
+		save_requested.emit()
 	
 
 func on_adjacent_check(r: int, c: int, big_r: int, big_c: int):
@@ -332,7 +343,8 @@ func on_adjacent_check(r: int, c: int, big_r: int, big_c: int):
 		return
 	
 	flood_open(big_r, big_c, r, c)
-	save_requested.emit()
+	if game_running:
+		save_requested.emit()
 	
 func flag_changed(r: int, c: int, flagged: int, big_r: int, big_c: int):
 	grid[big_r][big_c][r][c].flag_state = flagged
@@ -372,7 +384,8 @@ func flag_changed(r: int, c: int, flagged: int, big_r: int, big_c: int):
 						if grid[ch_br][ch_bc][ch_r][ch_c].revealed:
 							reveal_space(ch_br, ch_bc, ch_r, ch_c)
 	
-	save_requested.emit()
+	if game_running:
+		save_requested.emit()
 		
 	
 	

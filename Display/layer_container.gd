@@ -58,6 +58,11 @@ func mine_revealed(big_r: int, big_c: int, r: int, c: int):
 	if big_r == self.big_r and big_c == self.big_c:
 		$LayerDisplay.mine_revealed(r, c)
 		
+		
+func nomine_revealed(big_r: int, big_c: int, r: int, c: int):
+	if big_r == self.big_r and big_c == self.big_c:
+		$LayerDisplay.nomine_revealed(r, c)
+		
 func number_revealed(big_r: int, big_c: int, r: int, c: int, count: int):
 	if big_r == self.big_r and big_c == self.big_c:
 		$LayerDisplay.number_revealed(r, c, count)

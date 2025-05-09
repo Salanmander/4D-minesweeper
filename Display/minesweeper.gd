@@ -52,6 +52,7 @@ func setup_grid_display():
 			layer_display.set_dimensions(rows, cols)
 			mine_board.exploded.connect(layer_display.exploded)
 			mine_board.mine_revealed.connect(layer_display.mine_revealed)
+			mine_board.nomine_revealed.connect(layer_display.nomine_revealed)
 			mine_board.number_revealed.connect(layer_display.number_revealed)
 			mine_board.blank_revealed.connect(layer_display.blank_revealed)
 			mine_board.flag_loaded.connect(layer_display.flag_loaded)
