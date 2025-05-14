@@ -3,7 +3,7 @@ extends Control
 var big_r: int
 var big_c: int
 
-var SCALE_SIZE: Vector2 = Vector2(3, 3)
+var SCALE_SIZE: Vector2 = Vector2(2, 2)
 var GRID_EXTRA_SPACING: Vector2 = Vector2(10, 10)
 
 signal clicked(r: int, c: int)

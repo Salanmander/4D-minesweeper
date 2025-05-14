@@ -23,8 +23,10 @@ ButtonStates="*res://State/button_states.gd"
 
 [display]
 
-window/size/viewport_width=1800
-window/size/viewport_height=1000
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=2
+window/stretch/mode="canvas_items"
 
 [input]
 
