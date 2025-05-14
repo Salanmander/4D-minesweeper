@@ -41,6 +41,7 @@ func setup_other_options():
 	
 	var input: Control = packed_num_input.instantiate()
 	input.set_label("mines")
+	input.set_max_val(999)
 	mines_input = input
 	$Other.add_child(input)
 	

@@ -16,3 +16,4 @@ text = "big_r"
 
 [node name="SpinBox" type="SpinBox" parent="."]
 layout_mode = 2
+max_value = 40.0
