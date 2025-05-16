@@ -60,9 +60,12 @@ func setup_grid_display():
 			mine_board.blank_revealed.connect(layer_display.blank_revealed)
 			mine_board.flag_loaded.connect(layer_display.flag_loaded)
 			
+			ButtonStates.two_button_click.connect(layer_display.two_button_click)
+			
 			layer_display.clicked.connect(mine_board.on_click.bindv([r, c]))
 			layer_display.adjacent_check.connect(mine_board.on_adjacent_check.bindv([r, c]))
 			layer_display.flag_changed.connect(mine_board.flag_changed.bindv([r, c]))
+			
 			
 	# Connect signals between layers for highlighting
 	var layer_displays: Array[Node] = grid_node.get_children()

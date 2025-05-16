@@ -71,6 +71,9 @@ func blank_revealed(big_r: int, big_c: int, r: int, c: int):
 	if big_r == self.big_r and big_c == self.big_c:
 		$LayerDisplay.blank_revealed(r, c)
 		
+func two_button_click(event: InputEvent):
+	$LayerDisplay.two_button_click_if_local(event)
+		
 # Input order is different because big_r and big_c are passed from a bindv
 func entered(r: int, c: int, big_r: int, big_c: int):
 	$HighlightDisplay.clear_all()

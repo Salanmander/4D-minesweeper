@@ -116,8 +116,7 @@ func adjacent_indicate(r: int, c: int):
 	
 	
 	
-
-	
+#region input
 	
 func _input(event: InputEvent):
 	
@@ -147,8 +146,10 @@ func _input(event: InputEvent):
 	if event is InputEventMouseMotion:
 		update_mouse_position(event.position)
 	elif event.button_index == MOUSE_BUTTON_RIGHT:
+		update_mouse_position(event.position)
 		right_button_click(event)
 	elif event.button_index == MOUSE_BUTTON_LEFT:
+		update_mouse_position(event.position)
 		left_button_click(event)
 		
 
@@ -164,7 +165,11 @@ func left_button_click(event: InputEvent):
 		# Only register releases
 		return
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
-		# If right is still held, we were coming from a two-button-click.
+		# If right is still held, coming from a 2-button click
+		# Ignore it.
+		return
+	if ButtonStates.msec_since_right_release() < ButtonStates.two_button_click_time*2:
+		# If right was released recently, coming from a 2-button click
 		# Ignore it.
 		return
 		
@@ -177,22 +182,18 @@ func left_button_click(event: InputEvent):
 		# Emit in form r, c
 		clicked.emit(map_loc.y, map_loc.x)
 		
-func adjacent_check_click(local_pos: Vector2):
-	
-	var map_loc: Vector2i = local_to_map(local_pos)
-	
-	var this_tile: Vector2i = get_cell_atlas_coords(map_loc)
-	
-	# Want to register and adjacent-check click on any *number*
-	# Things on the extras row don't count
-	if this_tile.y == EXTRAS_ROW:
-		return
-	adjacent_check.emit(map_loc.y, map_loc.x)
-		
 
 func right_button_click(event:InputEvent):
 	# Only responding to mouse-release events
 	if event.pressed:
+		return
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		# If left is still held, coming from a 2-button click
+		# Ignore it.
+		return
+	if ButtonStates.msec_since_left_release() < ButtonStates.two_button_click_time*2:
+		# If left was released recently, coming from a 2-button click
+		# Ignore it.
 		return
 		
 	var map_loc: Vector2i = local_to_map(event.position)
@@ -210,6 +211,28 @@ func right_button_click(event:InputEvent):
 		flag_changed.emit(map_loc.y, map_loc.x, Consts.FLAG_STATE)
 		
 	pass
+	
+func two_button_click_if_local(event: InputEvent):
+	event = make_input_local(event)
+	if(in_local_bounds(event.position)):
+		adjacent_check_click(event.position)
+	
+		
+func adjacent_check_click(local_pos: Vector2):
+	
+	var map_loc: Vector2i = local_to_map(local_pos)
+	
+	var this_tile: Vector2i = get_cell_atlas_coords(map_loc)
+	
+	# Want to register and adjacent-check click on any *number*
+	# Things on the extras row don't count
+	if this_tile.y == EXTRAS_ROW:
+		return
+	adjacent_check.emit(map_loc.y, map_loc.x)
+		
+
+	
+#endregion
 	
 func is_hidden(r: int, c: int) -> bool:
 	
