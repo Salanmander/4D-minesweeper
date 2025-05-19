@@ -135,7 +135,7 @@ func save_game():
 	save_file.store_16(cols)
 	var full_objects: bool = true
 	save_file.store_var(mine_board.get_grid(), full_objects)
-	save_file.close
+	save_file.close()
 	
 func load_game():
 	var save_file: FileAccess = FileAccess.open(save_filename, FileAccess.READ)

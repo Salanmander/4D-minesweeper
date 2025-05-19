@@ -82,6 +82,7 @@ func number_revealed(r: int, c: int, count: int):
 	var atlas_x = count%10
 	
 	# Shift down based on the row where zero is
+	@warning_ignore("integer_division")
 	var atlas_y = count/10 + ZERO_ROW
 	
 	# If we get a negative mod, that's because the number is less than
@@ -153,6 +154,7 @@ func _input(event: InputEvent):
 		left_button_click(event)
 		
 
+@warning_ignore("shadowed_variable_base_class")
 func update_mouse_position(position: Vector2):
 	var map_loc: Vector2i = local_to_map(position)
 	# Emit in form r, c
@@ -254,6 +256,7 @@ func in_map_bounds(r: int, c: int) -> bool:
 	return false
 	
 	
+@warning_ignore("shadowed_variable_base_class")
 func in_local_bounds(position: Vector2) -> bool:
 	var map_pos: Vector2i = local_to_map(position)
 	if map_pos.x < cols and map_pos.x >= 0:

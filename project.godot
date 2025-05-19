@@ -13,13 +13,20 @@ config_version=5
 config/name="4D Minesweeper"
 run/main_scene="res://Display/minesweeper.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
-config/icon="res://icon.svg"
+boot_splash/show_image=false
+boot_splash/image="res://icon.png"
+config/icon="res://icon.png"
 
 [autoload]
 
 Tester="*res://State/tester.gd"
 Consts="*res://State/consts.gd"
 ButtonStates="*res://State/button_states.gd"
+
+[debug]
+
+gdscript/warnings/unused_parameter=0
+gdscript/warnings/shadowed_variable=0
 
 [display]
 

@@ -15,6 +15,7 @@ func set_dimensions(rows: int, cols: int):
 func clear_all():
 	clear()
 	
+@warning_ignore("shadowed_variable_base_class")
 func highlight(r: int, c:int, hidden: bool):
 	if hidden:
 		set_cell(Vector2i(c, r), 0, Vector2i(0, 0))

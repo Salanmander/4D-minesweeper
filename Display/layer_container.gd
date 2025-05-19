@@ -82,6 +82,7 @@ func entered(r: int, c: int, big_r: int, big_c: int):
 		for ch_r in [r-1, r, r+1]:
 			for ch_c in [c-1, c, c+1]:
 				if $LayerDisplay.in_map_bounds(ch_r, ch_c):
+					@warning_ignore("shadowed_variable_base_class")
 					var hidden: bool = $LayerDisplay.is_hidden(ch_r, ch_c)
 					$HighlightDisplay.highlight(ch_r, ch_c, hidden)
 					
