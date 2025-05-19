@@ -15,9 +15,10 @@ var mine_board: Mine4D
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	display_diff = true
-	start_new_game(4, 6, 7, 9, 40)
 	if(FileAccess.file_exists(save_filename)):
 		load_game()
+	else:
+		start_new_game(5, 7, 7, 9, 120)
 	
 func start_new_game(big_rows: int, big_cols: int, rows: int, cols: int, mines: int):
 	# Constants for number of rows/cols
