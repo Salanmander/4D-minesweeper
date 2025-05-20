@@ -41,6 +41,7 @@ mouse_filter = 0
 
 [node name="LayerGrid" type="GridContainer" parent="VBox/Scroll"]
 layout_mode = 2
+size_flags_horizontal = 6
 
 [node name="VictoryLabel" type="Label" parent="."]
 layout_mode = 2
